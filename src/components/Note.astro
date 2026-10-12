@@ -1,0 +1,20 @@
+---
+import { render } from 'astro:content';
+import { type Note, noteUrl, isLong, excerpt, formatDate } from '../lib/notes';
+interface Props { note: Note; full?: boolean; }
+const { note, full = false } = Astro.props;
+const { Content } = await render(note);
+const truncated = !full && isLong(note);
+const url = noteUrl(note);
+const DateTag = full && !note.data.title ? 'h1' : 'span';
+---
+<article class:list={['note', { 'note-full': full }]} aria-label={note.data.title || `${formatDate(note.data.date)}的记录`} data-note-id={note.id}>
+  <div class="note-meta flex flex-wrap items-center gap-x-3 gap-y-1">
+    <DateTag class="date-heading"><a class="date-link" href={url} aria-label={`${formatDate(note.data.date)}，记录永久链接`}><time datetime={note.data.date}>{formatDate(note.data.date)}</time></a></DateTag>
+    {note.collection === 'examples' && <span class="sample-label">示例</span>}
+    {full && note.data.updated && <span>更新于 <time datetime={note.data.updated}>{formatDate(note.data.updated)}</time></span>}
+  </div>
+  {note.data.title && (full ? <h1 class="note-title">{note.data.title}</h1> : <h2 class="note-title"><a href={url}>{note.data.title}</a></h2>)}
+  {truncated ? <p class="prose excerpt">{excerpt(note)}</p> : <div class="prose"><Content /></div>}
+  {truncated && <a class="read-more inline-flex items-center gap-2" href={url} aria-label={`阅读全文：${note.data.title || formatDate(note.data.date)}`}>阅读全文 <span aria-hidden="true">↗</span></a>}
+</article>

@@ -1,0 +1,47 @@
+<fieldset class="theme-switch">
+  <legend class="sr-only">配色主题</legend>
+  <label title="跟随系统">
+    <input type="radio" name="theme" value="system" checked aria-label="跟随系统" />
+    <span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="3" y="3.5" width="14" height="10" rx="1.5"/><path d="M7 16.5h6M10 13.5v3"/></svg></span>
+  </label>
+  <label title="浅色">
+    <input type="radio" name="theme" value="light" aria-label="浅色" />
+    <span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.25"/><path d="M10 2v1.5M10 16.5V18M2 10h1.5M16.5 10H18M4.35 4.35l1 1M14.65 14.65l1 1M4.35 15.65l1-1M14.65 5.35l1-1"/></svg></span>
+  </label>
+  <label title="深色">
+    <input type="radio" name="theme" value="dark" aria-label="深色" />
+    <span><svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.9 11.1A7 7 0 0 1 8.9 3a7 7 0 1 0 8 8.1Z"/></svg></span>
+  </label>
+</fieldset>
+
+<script>
+  type Theme = 'system' | 'light' | 'dark';
+  const media = window.matchMedia('(prefers-color-scheme: dark)');
+  let preference: Theme = 'system';
+  try {
+    const saved = localStorage.getItem('illufluo-theme');
+    if (saved === 'light' || saved === 'dark') preference = saved;
+  } catch { /* 隐私模式禁用存储时，切换仍在当前页生效。 */ }
+  const inputs = document.querySelectorAll<HTMLInputElement>('input[name="theme"]');
+  function apply() {
+    document.documentElement.dataset.theme = preference === 'system'
+      ? (media.matches ? 'dark' : 'light') : preference;
+    inputs.forEach((input) => { input.checked = input.value === preference; });
+  }
+  inputs.forEach((input) => input.addEventListener('change', () => {
+    preference = input.value as Theme;
+    try {
+      if (preference === 'system') localStorage.removeItem('illufluo-theme');
+      else localStorage.setItem('illufluo-theme', preference);
+    } catch { /* 不依赖存储。 */ }
+    apply();
+  }));
+  media.addEventListener('change', apply);
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'illufluo-theme' || event.key === null) {
+      preference = event.newValue === 'dark' || event.newValue === 'light' ? event.newValue : 'system';
+      apply();
+    }
+  });
+  apply();
+</script>

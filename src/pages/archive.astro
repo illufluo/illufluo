@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PreviewNotice from '../components/PreviewNotice.astro';
+import { getNotes, noteUrl, excerpt } from '../lib/notes';
+const notes = await getNotes();
+const years = [...new Set(notes.map((note) => note.data.date.slice(0, 4)))];
+---
+<BaseLayout title="归档" description="illufluo 的记录，按时间排列。">
+  <section class="page-intro"><h1>归档</h1><p>写下的片段，按时间收在这里。</p></section>
+  <PreviewNotice />
+  {years.length ? <div class="archive">{years.map((year) => <section class="archive-year" aria-labelledby={`year-${year}`}>
+    <h2 id={`year-${year}`}>{year}</h2>
+    <ol>{notes.filter((note) => note.data.date.startsWith(year)).map((note) => <li>
+      <a href={noteUrl(note)} class="archive-row">
+        <time datetime={note.data.date}>{note.data.date.slice(5).replace('-', ' / ')}</time>
+        <span>{note.data.title || excerpt(note, 58)}</span>
+        {note.collection === 'examples' && <small class="sample-label">示例</small>}
+        <span class="archive-arrow" aria-hidden="true">↗</span>
+      </a>
+    </li>)}</ol>
+  </section>)}</div> : <div class="empty-state bordered"><p>暂时还没有公开的记录。</p></div>}
+</BaseLayout>

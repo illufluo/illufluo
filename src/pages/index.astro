@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Note from '../components/Note.astro';
+import PreviewNotice from '../components/PreviewNotice.astro';
+import { getNotes } from '../lib/notes';
+const notes = await getNotes();
+const recent = notes.slice(0, 10);
+---
+<BaseLayout>
+  <section class="page-intro home-intro">
+    <h1>一些想法与记录。</h1>
+    <p>片段、随笔，和偶尔写下的文章。<br />不定期更新。</p>
+  </section>
+  <PreviewNotice />
+  <section aria-labelledby="recent-heading">
+    <div class="section-heading flex items-center justify-between">
+      <h2 id="recent-heading">最近记录</h2>
+      <span class="section-caption" aria-hidden="true">NOTES & THOUGHTS</span>
+    </div>
+    {recent.length ? <div class="note-list">{recent.map((note) => <Note note={note} />)}</div> : <div class="empty-state"><p>这里留给一些想法。</p><p>暂时还没有公开的记录。</p></div>}
+    {notes.length > 10 && <a class="archive-link" href="/archive/">查看全部记录 <span aria-hidden="true">→</span></a>}
+  </section>
+</BaseLayout>

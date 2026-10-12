@@ -1,0 +1,30 @@
+# Dependencies and generated output
+node_modules/
+dist/
+dist-demo/
+.astro/
+
+# Local environment and credentials (keep the safe example)
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.wrangler/
+
+# Test reports and tooling caches
+playwright-report/
+playwright/.cache/
+blob-report/
+test-results/
+coverage/
+.cache/
+*.tsbuildinfo
+
+# Local logs, editor settings and operating system files
+*.log
+.codex/
+.vscode/
+.idea/
+.DS_Store
+._*

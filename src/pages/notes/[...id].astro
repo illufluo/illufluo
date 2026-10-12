@@ -1,0 +1,10 @@
+---
+import NotePage from '../../components/NotePage.astro';
+import { getNotes } from '../../lib/notes';
+export async function getStaticPaths() {
+  return (await getNotes()).filter((note) => note.collection === 'notes')
+    .map((note) => ({ params: { id: note.id }, props: { note } }));
+}
+const { note } = Astro.props;
+---
+<NotePage note={note} />

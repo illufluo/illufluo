@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import NoteComponent from './Note.astro';
+import { type Note, excerpt, formatDate } from '../lib/notes';
+interface Props { note: Note; }
+const { note } = Astro.props;
+---
+<BaseLayout title={note.data.title || formatDate(note.data.date)} description={excerpt(note, 155)} article date={note.data.date} updated={note.data.updated}>
+  <div class="detail-heading flex items-center justify-between">
+    <a class="back-link" href="/">← 返回首页</a>
+    <span>记录</span>
+  </div>
+  <NoteComponent note={note} full />
+  <div class="detail-end"><a class="back-link" href="/archive/">浏览归档 <span aria-hidden="true">→</span></a></div>
+</BaseLayout>
